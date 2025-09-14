@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Raspberry Pi Camera Dashboard</title>
+    <style>
+        body { font-family: Arial; text-align: center; }
+        #stats { margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <h1>Live Camera Stream & System Stats</h1>
+    <img src="{{ url_for('video_feed') }}" width="640" height="480"><br>
+
+    <div id="stats">
+        <p>FPS: <span id="fps">0</span></p>
+        <p>CPU Usage: <span id="cpu">0</span>%</p>
+        <p>Memory Usage: <span id="mem">0</span>%</p>
+    </div>
+
+    <script>
+        async function updateStats() {
+            try {
+                const response = await fetch('/stats');
+                const data = await response.json();
+                document.getElementById('fps').innerText = data.fps;
+                document.getElementById('cpu').innerText = data.cpu;
+                document.getElementById('mem').innerText = data.memory;
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        setInterval(updateStats, 1000); // update every second
+        updateStats();
+    </script>
+</body>
+</html>
